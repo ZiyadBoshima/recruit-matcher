@@ -1,4 +1,4 @@
-package com.ziyad.recruitingspring;
+package com.ziyad.recruitingspring.service;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;

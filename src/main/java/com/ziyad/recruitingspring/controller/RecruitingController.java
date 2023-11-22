@@ -1,5 +1,6 @@
-package com.ziyad.recruitingspring;
+package com.ziyad.recruitingspring.controller;
 
+import com.ziyad.recruitingspring.service.DocumentService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
