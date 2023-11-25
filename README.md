@@ -1,5 +1,5 @@
 # Recruit Matcher
-This is a WIP of a Spring Boot API to help recruiters compare candidates using a scoring system.
+This is a WIP Spring Boot API to help recruiters compare candidates using a scoring system.
 
 ## To Get Started
 Clone the repository.
