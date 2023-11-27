@@ -1,4 +1,6 @@
-package com.ziyad.recruitingspring.model;
+package com.ziyad.recruitingspring.model.chatgpt;
+
+import com.ziyad.recruitingspring.model.Message;
 
 import java.util.ArrayList;
 import java.util.List;
