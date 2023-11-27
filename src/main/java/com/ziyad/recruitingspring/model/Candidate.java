@@ -1,6 +1,8 @@
 package com.ziyad.recruitingspring.model;
 
+import com.ziyad.recruitingspring.utility.JSON;
 import org.bson.types.ObjectId;
+import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,6 +21,16 @@ public class Candidate {
         this.name = name;
         this.skills = skills;
         this.yearsOfExperience = yearsOfExperience;
+    }
+
+    public Candidate(JSONObject jsonObject) {
+        try {
+            this.name = jsonObject.getString("name");
+            this.skills = JSON.jsonToList(jsonObject.getJSONArray("skills"));
+            this.yearsOfExperience = jsonObject.getInt("yearsOfExperience");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ObjectId getId() {

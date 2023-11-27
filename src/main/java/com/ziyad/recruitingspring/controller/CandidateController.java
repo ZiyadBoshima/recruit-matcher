@@ -4,6 +4,7 @@ import com.ziyad.recruitingspring.model.Candidate;
 import com.ziyad.recruitingspring.service.CandidateService;
 import com.ziyad.recruitingspring.service.DocumentService;
 import org.bson.types.ObjectId;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,11 +40,24 @@ public class CandidateController {
 
     @PostMapping("/upload-resume")
     public ResponseEntity<String> uploadResume(@RequestParam(name = "file", required = false) MultipartFile file) {
-        if (!file.isEmpty()) {
-            String resumeText = documentService.convertDocToText(file);
-            String options = "the name, skills, and years of professional experience(represented by one value. Years of experience is not an area).";
-            ResponseEntity<String> responseEntity = documentService.extractJson(options, resumeText);
-            return responseEntity;
-        } else return new ResponseEntity<String>("File is empty!", HttpStatus.BAD_REQUEST);
+        try {
+            if (file != null && !file.isEmpty()) {
+                String resumeText = documentService.convertDocToText(file);
+                String options = "the name, skills, and years of experience(labeled yearsOfExperience, which represents professional experience only and is indicated by one integer value. Years of experience is not an array).";
+                ResponseEntity<String> responseEntity = documentService.extractJson(options, resumeText);
+
+                if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                    Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
+                    //TODO: Add error handling for addCandidate function
+                    return new ResponseEntity<String>("Upload successful: " + candidateService.addCandidate(candidate), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<String>(responseEntity.getBody(), responseEntity.getStatusCode());
+                }
+            } else {
+                return new ResponseEntity<String>("File is empty!", HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<String>("An error occurred during processing.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
