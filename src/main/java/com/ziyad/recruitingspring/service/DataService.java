@@ -17,7 +17,7 @@ import java.io.InputStream;
 import static org.apache.pdfbox.io.IOUtils.toByteArray;
 
 @Service
-public class DocumentService {
+public class DataService {
 
 
     @Autowired

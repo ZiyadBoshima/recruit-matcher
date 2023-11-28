@@ -24,7 +24,6 @@ public class GPTService {
         this.apiUrl = apiUrl;
     }
 
-
     public GPTResponse generateResponse(String prompt) {
         GPTRequest request = new GPTRequest(model, prompt);
         request.setN(1);

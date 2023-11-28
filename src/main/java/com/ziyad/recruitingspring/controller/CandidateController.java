@@ -2,7 +2,7 @@ package com.ziyad.recruitingspring.controller;
 
 import com.ziyad.recruitingspring.model.Candidate;
 import com.ziyad.recruitingspring.service.CandidateService;
-import com.ziyad.recruitingspring.service.DocumentService;
+import com.ziyad.recruitingspring.service.DataService;
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class CandidateController {
     private CandidateService candidateService;
 
     @Autowired
-    private DocumentService documentService;
+    private DataService dataService;
 
     @GetMapping("/all")
     public ResponseEntity<List<Candidate>> getAllCandidates() {
@@ -42,9 +42,9 @@ public class CandidateController {
     public ResponseEntity<String> uploadResume(@RequestParam(name = "file", required = false) MultipartFile file) {
         try {
             if (file != null && !file.isEmpty()) {
-                String resumeText = documentService.convertDocToText(file);
+                String resumeText = dataService.convertDocToText(file);
                 String options = "the name, skills, and years of experience(labeled yearsOfExperience, which represents professional experience only and is indicated by one integer value. Years of experience is not an array).";
-                ResponseEntity<String> responseEntity = documentService.extractJson(options, resumeText);
+                ResponseEntity<String> responseEntity = dataService.extractJson(options, resumeText);
 
                 if (responseEntity.getStatusCode() == HttpStatus.OK) {
                     Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
