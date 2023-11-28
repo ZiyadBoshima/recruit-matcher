@@ -1,22 +1,14 @@
 package com.ziyad.recruitingspring.service;
 
-import com.ziyad.recruitingspring.model.chatgpt.GPTRequest;
 import com.ziyad.recruitingspring.model.chatgpt.GPTResponse;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.tomcat.util.json.JSONParser;
-import org.bson.json.JsonObject;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,15 +19,9 @@ import static org.apache.pdfbox.io.IOUtils.toByteArray;
 @Service
 public class DocumentService {
 
-    @Qualifier("openaiRestTemplate")
+
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Value("${openai.model}")
-    private String model;
-
-    @Value("${openai.api.url}")
-    private String apiUrl;
+    GPTService gptService;
 
     public String convertDocToText(MultipartFile file) {
         try {
@@ -69,12 +55,8 @@ public class DocumentService {
         }
         else return new ResponseEntity<String>("No arguments!", HttpStatus.BAD_REQUEST);
 
-        GPTRequest request = new GPTRequest(model, prompt);
-        request.setN(1);
-        request.setTemperature(1);
-
         try {
-            GPTResponse response = restTemplate.postForObject(apiUrl, request, GPTResponse.class);
+            GPTResponse response = gptService.generateResponse(prompt);
             if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
                 return new ResponseEntity<String>("No Response.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
