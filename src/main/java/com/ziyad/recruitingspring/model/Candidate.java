@@ -1,6 +1,6 @@
 package com.ziyad.recruitingspring.model;
 
-import com.ziyad.recruitingspring.utility.JSON;
+import com.ziyad.recruitingspring.utility.Json;
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
@@ -26,7 +26,7 @@ public class Candidate {
     public Candidate(JSONObject jsonObject) {
         try {
             this.name = jsonObject.getString("name");
-            this.skills = JSON.jsonToList(jsonObject.getJSONArray("skills"));
+            this.skills = Json.jsonToList(jsonObject.getJSONArray("skills"));
             this.yearsOfExperience = jsonObject.getInt("yearsOfExperience");
         } catch (Exception e) {
             e.printStackTrace();

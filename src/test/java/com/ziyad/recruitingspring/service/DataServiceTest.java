@@ -35,23 +35,22 @@ public class DataServiceTest {
 
 
     @Test
-    public void testConvertDocToText() {
-        try {
-            Path pdfFilePath = Paths.get("src", "test", "resources", "dummy.pdf");
+    public void convertDocToText_validPdf_true() throws IOException {
+        Path pdfFilePath = Paths.get("src", "test", "resources", "dummy.pdf");
 
-            InputStream pdfInputStream = Files.newInputStream(pdfFilePath);
+        InputStream pdfInputStream = Files.newInputStream(pdfFilePath);
 
-            MockMultipartFile mockFile = new MockMultipartFile("dummy.pdf", pdfInputStream);
+        MockMultipartFile mockFile = new MockMultipartFile("dummy.pdf", pdfInputStream);
 
-            String result = dataService.convertDocToText(mockFile);
-            assertEquals("Dummy PDF file\n", result);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail("An exception occurred while testing convertDocToText.");
-        }
+        String result = dataService.convertDocToText(mockFile);
+        assertEquals("Dummy PDF file\n", result);
     }
 
     @Test
+    public void convertDocToText_invalidPdf_false() throws Exception {
+    }
+
+        @Test
     public void testExtractJsonWithData() {
         String options = "name, years of experience, and skills";
         String data = "name steven, experience 2 years, skills carpentry.";

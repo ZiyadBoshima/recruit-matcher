@@ -40,22 +40,19 @@ public class CandidateController {
     }
 
     @PostMapping("/upload-resume")
-    public ResponseEntity<String> uploadResume(@RequestParam(name = "file", required = false) MultipartFile file) {
+    public ResponseEntity<String> uploadResume(@RequestParam(name = "file", required = true) MultipartFile file) {
         try {
-            if (file != null && !file.isEmpty()) {
-                String resumeText = dataService.convertDocToText(file);
-                String options = "the name, skills, and years of experience(labeled yearsOfExperience, which represents professional experience only and is indicated by one integer value. Years of experience is not an array).";
-                ResponseEntity<String> responseEntity = dataService.extractJson(options, resumeText);
+            String resumeText = dataService.convertDocToText(file);
+            String options = "the name, skills, and years of experience(labeled yearsOfExperience, which represents professional experience only and is indicated by one integer value. Years of experience is not an array).";
+            ResponseEntity<String> responseEntity = dataService.extractJson(options, resumeText);
 
-                if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                    Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
-                    //TODO: Add error handling for addCandidate function
-                    return new ResponseEntity<String>("Upload successful: " + candidateService.addCandidate(candidate), HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<String>(responseEntity.getBody(), responseEntity.getStatusCode());
-                }
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                // Move to data service
+                Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
+                //TODO: Add error handling for addCandidate function
+                return new ResponseEntity<String>("Upload successful: " + candidateService.addCandidate(candidate), HttpStatus.OK);
             } else {
-                return new ResponseEntity<String>("File is empty!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<String>(responseEntity.getBody(), responseEntity.getStatusCode());
             }
         } catch (Exception e) {
             return new ResponseEntity<String>("An error occurred during processing.", HttpStatus.INTERNAL_SERVER_ERROR);
