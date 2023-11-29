@@ -5,7 +5,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JSON {
+public class Json {
     public static List<String> jsonToList(JSONArray jsonArray) {
         List<String> list = new ArrayList<>();
 
