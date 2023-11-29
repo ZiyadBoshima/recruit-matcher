@@ -19,7 +19,6 @@ import static org.apache.pdfbox.io.IOUtils.toByteArray;
 @Service
 public class DataService {
 
-
     @Autowired
     GPTService gptService;
 
@@ -41,6 +40,9 @@ public class DataService {
         } catch (IOException e) {
             e.printStackTrace();
             return "Failed to read file";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An unexpected error occurred";
         }
     }
 
