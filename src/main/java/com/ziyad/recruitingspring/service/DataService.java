@@ -65,8 +65,7 @@ public class DataService {
             return new ResponseEntity<String>(response.getChoices().get(0).getMessage().getContent(), HttpStatus.OK);
         } catch (HttpClientErrorException e)
         {
-            // status code should be related to the client 4xx
-            return new ResponseEntity<String>("Exception Error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<String>("Exception Error: " + e, HttpStatus.BAD_REQUEST);
         }
     }
 }

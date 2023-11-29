@@ -33,7 +33,6 @@ public class DataServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-
     @Test
     public void convertDocToText_validPdf_true() throws IOException {
         Path pdfFilePath = Paths.get("src", "test", "resources", "dummy.pdf");
