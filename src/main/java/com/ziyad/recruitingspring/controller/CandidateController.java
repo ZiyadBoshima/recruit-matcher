@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ziyad.recruitingspring.constants.Constants.RESUME_PROCESSING_OPTIONS;
+
 @RestController
 @RequestMapping("/candidate")
 public class CandidateController {
@@ -42,20 +44,9 @@ public class CandidateController {
     @PostMapping("/upload-resume")
     public ResponseEntity<String> uploadResume(@RequestParam(name = "file", required = true) MultipartFile file) {
         try {
-            String resumeText = dataService.convertDocToText(file);
-            String options = "the name, skills, and years of experience(labeled yearsOfExperience, which represents professional experience only and is indicated by one integer value. Years of experience is not an array).";
-            ResponseEntity<String> responseEntity = dataService.extractJson(options, resumeText);
-
-            if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                // Move to data service
-                Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
-                //TODO: Add error handling for addCandidate function
-                return new ResponseEntity<String>("Upload successful: " + candidateService.addCandidate(candidate), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<String>(responseEntity.getBody(), responseEntity.getStatusCode());
-            }
+            return candidateService.addCandidateWithResume(RESUME_PROCESSING_OPTIONS, file);
         } catch (Exception e) {
-            return new ResponseEntity<String>("An error occurred during processing.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<String>("An error occurred during processing: \n" + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

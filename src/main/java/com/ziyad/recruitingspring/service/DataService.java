@@ -70,6 +70,6 @@ public class DataService {
             return new ResponseEntity<String>("HTTP Client Error: " + e, e.getStatusCode());
         } catch (Exception e) {
             return new ResponseEntity<String>("Exception Error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        } 
     }
 }
