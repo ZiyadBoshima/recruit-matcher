@@ -15,8 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,6 @@ public class DataServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-
     @Test
     public void convertDocToText_validPdf_true() throws IOException {
         Path pdfFilePath = Paths.get("src", "test", "resources", "dummy.pdf");
@@ -47,10 +45,18 @@ public class DataServiceTest {
     }
 
     @Test
-    public void convertDocToText_invalidPdf_false() throws Exception {
+    public void convertDocToText_invalidPdf_false() throws IOException {
+        Path pdfFilePath = Paths.get("src", "test", "resources", "invalid.doc");
+
+        InputStream pdfInputStream = Files.newInputStream(pdfFilePath);
+
+        MockMultipartFile mockFile = new MockMultipartFile("invalid.pdf", pdfInputStream);
+
+        String result = dataService.convertDocToText(mockFile);
+        assertEquals("Failed to read file", result);
     }
 
-        @Test
+    @Test
     public void testExtractJsonWithData() {
         String options = "name, years of experience, and skills";
         String data = "name steven, experience 2 years, skills carpentry.";

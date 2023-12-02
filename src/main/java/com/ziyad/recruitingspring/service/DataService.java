@@ -22,7 +22,7 @@ public class DataService {
     @Autowired
     GPTService gptService;
 
-    public String convertDocToText(MultipartFile file) {
+    public String convertDocToText(MultipartFile file)  throws IOException {
         try {
             InputStream inputStream = file.getInputStream();
 
@@ -38,7 +38,6 @@ public class DataService {
 
             return  content;
         } catch (IOException e) {
-            e.printStackTrace();
             return "Failed to read file";
         } catch (Exception e) {
             e.printStackTrace();
