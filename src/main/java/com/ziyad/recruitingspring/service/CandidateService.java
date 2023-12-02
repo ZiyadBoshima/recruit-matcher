@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,15 +44,19 @@ public class CandidateService {
     }
 
     public ResponseEntity<String> addCandidateWithResume(String options, MultipartFile resume) {
-        String resumeText = dataService.convertDocToText(resume);
-        ResponseEntity<String> responseEntity = dataService.extractJson(options, resumeText);
+        try {
+            String resumeText = dataService.convertDocToText(resume);
+            ResponseEntity<String> responseEntity = dataService.extractJson(options, resumeText);
 
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
-            //TODO: Add error handling for addCandidate function
-            return new ResponseEntity<String>("Upload successful: " + addCandidate(candidate), HttpStatus.OK);
-        } else {
-            return responseEntity;
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                Candidate candidate = new Candidate(new JSONObject(responseEntity.getBody()));
+                //TODO: Add error handling for addCandidate function
+                return new ResponseEntity<String>("Upload successful: " + addCandidate(candidate), HttpStatus.OK);
+            } else {
+                return responseEntity;
+            }
+        } catch (IOException e) {
+            return new ResponseEntity<String>("Bad Request. Could not read file: " + e, HttpStatus.BAD_REQUEST);
         }
     }
 }
