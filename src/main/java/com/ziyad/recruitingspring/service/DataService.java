@@ -22,7 +22,7 @@ public class DataService {
     @Autowired
     GPTService gptService;
 
-    public String convertDocToText(MultipartFile file) {
+    public String convertDocToText(MultipartFile file)  throws IOException {
         try {
             InputStream inputStream = file.getInputStream();
 
@@ -38,7 +38,6 @@ public class DataService {
 
             return  content;
         } catch (IOException e) {
-            e.printStackTrace();
             return "Failed to read file";
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,25 +46,30 @@ public class DataService {
     }
 
     public ResponseEntity<String> extractJson(String options, String data) {
-        String prompt;
-        if (!options.isEmpty() && !data.isEmpty()) {
-            prompt = "Extract " + options + " in JSON format. Text data: " + data;
-        }
-        else if (!data.isEmpty())
-        {
-            prompt = "Extract the data in JSON format: " + data;
-        }
-        else return new ResponseEntity<String>("No arguments!", HttpStatus.BAD_REQUEST);
-
         try {
+            String prompt;
+
+            if (!options.isEmpty() && !data.isEmpty()) {
+                prompt = "Extract " + options + " in JSON format. Text data: " + data;
+            }
+            else if (!data.isEmpty()) {
+                prompt = "Extract the data in JSON format: " + data;
+            }
+            else {
+                return new ResponseEntity<String>("Invalid arguments!", HttpStatus.BAD_REQUEST);
+            }
+
             GPTResponse response = gptService.generateResponse(prompt);
+
             if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
                 return new ResponseEntity<String>("No Response.", HttpStatus.INTERNAL_SERVER_ERROR);
+            } else {
+                return new ResponseEntity<String>(response.getChoices().get(0).getMessage().getContent(), HttpStatus.OK);
             }
-            return new ResponseEntity<String>(response.getChoices().get(0).getMessage().getContent(), HttpStatus.OK);
-        } catch (HttpClientErrorException e)
-        {
-            return new ResponseEntity<String>("Exception Error: " + e, HttpStatus.BAD_REQUEST);
-        }
+        } catch (HttpClientErrorException e) {
+            return new ResponseEntity<String>("HTTP Client Error: " + e, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<String>("Exception Error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+        } 
     }
 }
