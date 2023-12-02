@@ -1,10 +1,14 @@
 package com.ziyad.recruitingspring.service;
 
+import com.ziyad.recruitingspring.model.Message;
+import com.ziyad.recruitingspring.model.chatgpt.GPTResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,11 +18,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 public class DataServiceTest {
 
@@ -57,22 +62,38 @@ public class DataServiceTest {
     }
 
     @Test
-    public void testExtractJsonWithData() {
+    public void extractJson_validData_true() {
         String options = "name, years of experience, and skills";
-        String data = "name steven, experience 2 years, skills carpentry.";
-        String expectedPrompt = "Extract " + options + " in JSON format. Text data: " + data;
+        String data = "name steven, experience 2 years, skills carpentry and cage fighting.";
 
-        /*
-        List<GPTResponse.Choice> list = new ArrayList<>(GPTResponse.Choice(1, new Message("User", "Response"))
-        GPTResponse gptResponse = new GPTResponse(List<GPTResponse.Choice>().add(1, new Message("User", "Response"));
-        gptResponse.getChoices().add(new GPTResponse.Choice(1, new Message("User", "Response")));
+        GPTResponse mockResponse = new GPTResponse();
+        GPTResponse.Choice mockChoice = new GPTResponse.Choice();
+        mockChoice.setMessage(new Message("user", "Mock response content"));
+        mockResponse.setChoices(Collections.singletonList(mockChoice));
 
-        when(gptService.generateResponse(expectedPrompt)).thenReturn(gptResponse);
+        when(gptService.generateResponse(anyString())).thenReturn(mockResponse);
 
-        ResponseEntity<String> result = documentService.extractJson(options, data);
+        ResponseEntity<String> result = dataService.extractJson(options, data);
+
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("Response", result.getBody());
-         */
+        verify(gptService, times(1)).generateResponse(anyString());
+    }
+
+    @Test
+    public void extractJson_invalidData_false() {
+        String options = "name, years of experience, and skills";
+        String data = "";
+
+        GPTResponse mockResponse = new GPTResponse();
+        GPTResponse.Choice mockChoice = new GPTResponse.Choice();
+        mockChoice.setMessage(new Message("user", "Mock response content"));
+        mockResponse.setChoices(Collections.singletonList(mockChoice));
+
+        when(gptService.generateResponse(anyString())).thenReturn(mockResponse);
+
+        ResponseEntity<String> result = dataService.extractJson(options, data);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 }

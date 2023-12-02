@@ -46,25 +46,29 @@ public class DataService {
     }
 
     public ResponseEntity<String> extractJson(String options, String data) {
-        String prompt;
-        if (!options.isEmpty() && !data.isEmpty()) {
-            prompt = "Extract " + options + " in JSON format. Text data: " + data;
-        }
-        else if (!data.isEmpty())
-        {
-            prompt = "Extract the data in JSON format: " + data;
-        }
-        else return new ResponseEntity<String>("No arguments!", HttpStatus.BAD_REQUEST);
-
         try {
+            String prompt;
+
+            if (!options.isEmpty() && !data.isEmpty()) {
+                prompt = "Extract " + options + " in JSON format. Text data: " + data;
+            }
+            else if (!data.isEmpty()) {
+                prompt = "Extract the data in JSON format: " + data;
+            }
+            else {
+                return new ResponseEntity<String>("Invalid arguments!", HttpStatus.BAD_REQUEST);
+            }
+
             GPTResponse response = gptService.generateResponse(prompt);
+
             if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
                 return new ResponseEntity<String>("No Response.", HttpStatus.INTERNAL_SERVER_ERROR);
+            } else {
+                return new ResponseEntity<String>(response.getChoices().get(0).getMessage().getContent(), HttpStatus.OK);
             }
-            return new ResponseEntity<String>(response.getChoices().get(0).getMessage().getContent(), HttpStatus.OK);
-        } catch (HttpClientErrorException e)
-        {
-            // status code should be related to the client 4xx
+        } catch (HttpClientErrorException e) {
+            return new ResponseEntity<String>("HTTP Client Error: " + e, e.getStatusCode());
+        } catch (Exception e) {
             return new ResponseEntity<String>("Exception Error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
