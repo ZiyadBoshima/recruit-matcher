@@ -14,7 +14,6 @@ import org.springframework.data.mapping.MappingException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class JobService {
@@ -27,14 +26,16 @@ public class JobService {
     }
 
     public List<Job> getAllJobs() {
-        return jobRepository.findAll();
+        try {
+            return jobRepository.findAll();
+        } catch (DataAccessException e) {
+            throw new DatabaseAccessException("Error accessing the database.", e);
+        }
     }
 
-    public Optional<Job> getJob(ObjectId id) {
+    public Job getJobById(ObjectId id) {
         try {
-            return jobRepository.findById(String.valueOf(id));
-        } catch (JobNotFoundException e) {
-            throw new JobNotFoundException("Could not find job with the provided ID.", e);
+            return jobRepository.findById(String.valueOf(id)).orElseThrow(() -> new JobNotFoundException("Could not find job with the provided ID."));
         } catch (DataAccessException e) {
             throw new DatabaseAccessException("Error accessing the database.", e);
         }
@@ -50,7 +51,7 @@ public class JobService {
         }
     }
 
-    public void removeJob(ObjectId id) {
+    public void removeJobById(ObjectId id) {
         try {
             jobRepository.deleteById(id.toHexString());
         } catch (EmptyResultDataAccessException e) {
@@ -62,7 +63,11 @@ public class JobService {
 
     public Job updateJob(Job job) {
         try {
-            return jobRepository.save(job);
+            if (job.getId() != null && jobRepository.findById(job.getId().toString()).isPresent()) {
+                return jobRepository.save(job);
+            } else {
+                throw new JobNotFoundException("Could not update job that does not exist.");
+            }
         } catch (DataAccessException e) {
             throw new DatabaseAccessException("Error accessing the database.", e);
         } catch (MappingException e) {
