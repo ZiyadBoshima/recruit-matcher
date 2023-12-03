@@ -1,4 +1,4 @@
-package com.ziyad.recruitingspring.exceptions;
+package com.ziyad.recruitingspring.exceptions.job;
 
 public class DuplicateJobException extends RuntimeException {
 
