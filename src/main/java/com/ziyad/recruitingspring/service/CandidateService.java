@@ -27,10 +27,6 @@ public class CandidateService {
         this.dataService = dataService;
     }
 
-    public Candidate save(Candidate candidate) {
-        return candidateRepository.save(candidate);
-    }
-
     public List<Candidate> getAllCandidates() {
        return candidateRepository.findAll();
     }
