@@ -33,7 +33,7 @@ mvn spring-boot:run
 ```
 
 ## API
-#### Candidate service
+#### Candidate Service
 
 Method	      | Path	                    | Description
 ------------- | ------------------------- | ------------------------ |
