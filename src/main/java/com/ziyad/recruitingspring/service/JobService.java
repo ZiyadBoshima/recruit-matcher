@@ -1,10 +1,12 @@
 package com.ziyad.recruitingspring.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DuplicateKeyException;
 import com.ziyad.recruitingspring.exceptions.DatabaseAccessException;
 import com.ziyad.recruitingspring.exceptions.job.DuplicateJobException;
 import com.ziyad.recruitingspring.exceptions.job.JobNotFoundException;
 import com.ziyad.recruitingspring.model.Job;
+import com.ziyad.recruitingspring.model.chatgpt.GPTResponse;
 import com.ziyad.recruitingspring.repository.JobRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +17,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.ziyad.recruitingspring.constants.Constants.CANDIDATE_RANKING_OPTIONS;
+
 @Service
 public class JobService {
 
     private final JobRepository jobRepository;
+    private final CandidateService candidateService;
+    private final GPTService gptService;
 
     @Autowired
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository, CandidateService candidateService, GPTService gptService) {
         this.jobRepository = jobRepository;
+        this.candidateService = candidateService;
+        this.gptService = gptService;
     }
 
     public List<Job> getAllJobs() {
@@ -73,5 +81,24 @@ public class JobService {
         } catch (MappingException e) {
             throw new MappingException("Error mapping job with a document in the database.", e);
         }
+    }
+
+    public String rankCandidates(String jobDescription) throws Exception {
+        String string1 = "Here is the job description: " + jobDescription;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(candidateService.getAllCandidates());
+        String string2 = "And here are the candidates: " + jsonString;
+
+        String string3 = "Add a rank property inside of each candidate object. " +
+                "Append the rank of each candidate by a value calculated using the following criteria: ";
+
+        String prompt = string1 + "\n" + string2 + "\n" + string3 + CANDIDATE_RANKING_OPTIONS;
+
+        GPTResponse response = gptService.generateResponse(prompt);
+        if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
+            throw new Exception("No response from AI");
+        }
+        return response.getChoices().get(0).getMessage().getContent();
     }
 }

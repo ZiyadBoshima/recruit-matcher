@@ -20,7 +20,7 @@ import static org.apache.pdfbox.io.IOUtils.toByteArray;
 public class DataService {
 
     @Autowired
-    GPTService gptService;
+    private GPTService gptService;
 
     public String convertDocToText(MultipartFile file)  throws IOException {
         try {

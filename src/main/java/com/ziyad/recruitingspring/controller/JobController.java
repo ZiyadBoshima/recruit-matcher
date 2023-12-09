@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/job")
 public class JobController {
@@ -70,6 +68,19 @@ public class JobController {
         } catch (JobNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (DatabaseAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/ranked-candidates")
+    public ResponseEntity<?> rankCandidates(@PathVariable ObjectId id) {
+        try {
+            Job job = jobService.getJobById(id);
+            String json = jobService.rankCandidates(job.getDescription());
+            return ResponseEntity.status(HttpStatus.OK).body(json);
+        } catch (JobNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
