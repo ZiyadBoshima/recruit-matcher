@@ -17,6 +17,9 @@ public class Candidate {
     private List<String> skills;
     private int yearsOfExperience;
 
+    public Candidate() {
+    }
+
     public Candidate(String name, List<String> skills, int yearsOfExperience) {
         this.name = name;
         this.skills = skills;
