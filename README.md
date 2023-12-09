@@ -1,6 +1,10 @@
 # Recruit Matcher
 This is a WIP Spring Boot API to help recruiters compare candidates using a scoring system.
 
+## AI-Powered Features
+- Resume data extraction and processing
+- Candidate ranking for jobs
+
 ## To Get Started
 Clone the repository.
 ```git
@@ -27,3 +31,24 @@ Run the project.
 ```bash
 mvn spring-boot:run
 ```
+
+## API
+#### Candidate service
+
+Method	      | Path	                    | Description
+------------- | ------------------------- | ------------------------ |
+GET           | /candidates/all	          | Get all candidates
+GET           | /candidates/{id}          | Get specific candidate
+POST          | /candidates/              | Add a single candidate manually
+POST          | /candidates/submit-resume | Add a single candidate automatically using their resume
+
+##### Job Service
+
+Method	      | Path	                    | Description
+------------- | ------------------------- | ------------------------ |
+GET	          | /jobs/{id}	              | Get a specific job
+POST          | /jobs/                    | Submit a job
+PUT           | /jobs/                    | Update a job
+DELETE        | /jobs/{id}	              | Delete a specific job
+GET           | /jobs/{id}/ranked-candidates | Get all candidates ranked based on a specific job
+
