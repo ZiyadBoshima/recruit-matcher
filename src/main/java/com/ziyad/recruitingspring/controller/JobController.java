@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/job")
+@RequestMapping("/jobs")
 public class JobController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class JobController {
         }
     }
 
-    @PostMapping("submit-job")
+    @PostMapping("/")
     public ResponseEntity<String> submitJob(@RequestBody Job job) {
         try {
             Job submittedJob = jobService.addJob(job);
@@ -45,7 +45,7 @@ public class JobController {
         }
     }
 
-    @PutMapping("/update-job")
+    @PutMapping("/")
     public ResponseEntity<String> updateJob(@RequestBody Job job) {
         try {
             Job updatedJob = jobService.updateJob(job);

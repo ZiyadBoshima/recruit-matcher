@@ -17,7 +17,7 @@ import java.util.Optional;
 import static com.ziyad.recruitingspring.constants.Constants.RESUME_PROCESSING_OPTIONS;
 
 @RestController
-@RequestMapping("/candidate")
+@RequestMapping("/candidates")
 public class CandidateController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class CandidateController {
         return new ResponseEntity<Optional<Candidate>>(candidateService.getCandidate(id), HttpStatus.OK);
     }
 
-    @PostMapping("/add-candidate")
+    @PostMapping("/")
     public ResponseEntity<Candidate> addCandidate(@RequestBody Candidate candidate) {
         return new ResponseEntity<Candidate>(candidateService.addCandidate(candidate), HttpStatus.OK);
     }
