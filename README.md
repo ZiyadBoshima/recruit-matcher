@@ -1,5 +1,5 @@
 # Recruit Matcher
-This is a WIP Spring Boot API to help recruiters compare candidates using a scoring system.
+This is a Spring Boot API to help recruiters compare candidates using a scoring system.
 
 ## AI-Powered Features
 - Resume data extraction and processing
